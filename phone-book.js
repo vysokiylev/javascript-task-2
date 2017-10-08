@@ -74,6 +74,7 @@ exports.update = function (phone, name, email) {
  * @param {String} query
  * @returns {Number} count
  */
+
 exports.findAndRemove = function (query) {
     if (typeof query !== 'string' || !query) {
         return 0;
@@ -87,8 +88,7 @@ exports.findAndRemove = function (query) {
 function findByQuery(query) {
     var count = 0;
     for (var i = 0; i < phoneBook.length; i++) {
-        if (phoneBook[i].name.indexOf(query) !== -1 || phoneBook[i].email.indexOf(query) !== -1 ||
-            phoneBook[i].phone.indexOf(query) !== -1) {
+        if (findFields(query, phoneBook[i].phone, phoneBook[i].name, phoneBook[i].email)) {
             phoneBook.splice(i, 1);
             i--;
             count++;
@@ -96,6 +96,16 @@ function findByQuery(query) {
     }
 
     return count;
+}
+function findFields(query, phone, name, email) {
+    if (name.indexOf(query) !== -1 || phone.indexOf(query) !== -1) {
+
+        return true;
+    }
+
+    return email !== undefined && email.indexOf(query) !== -1;
+
+
 }
 
 /**
