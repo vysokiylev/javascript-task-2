@@ -23,8 +23,7 @@ exports.add = function (phone, name, email) {
     if (arguments.length === 2) {
         email = '';
     }
-    var isNoteValid = isPhoneValid(phone) && isEmailValid(email) &&
-        name !== undefined && name !== '';
+    var isNoteValid = isPhoneValid(phone) && isEmailValid(email) && name;
     var exists = false;
     for (var i = 0; i < phoneBook.length; i++) {
         if (phone === phoneBook[i].phone.slice(2)) {
@@ -39,7 +38,7 @@ exports.add = function (phone, name, email) {
     return isNoteValid && !exists;
 };
 function isPhoneValid(phone) {
-    var re = /5{3}[0-9]{7}$/;
+    var re = /^\d{10}$/;
 
     return re.test(phone);
 }
@@ -60,12 +59,15 @@ function isEmailValid(email) {
  * @returns {Boolean} updated
  */
 exports.update = function (phone, name, email) {
-    if (arguments.length === 2) {
+    if (arguments[2] === undefined) {
         email = '';
     }
     var isUpdated = false;
     for (var i = 0; i < phoneBook.length; i++) {
-        if (phoneBook[i].phone.slice(2) === phone && name !== undefined) {
+        if (phoneBook[i].email === undefined) {
+            phoneBook[i].email = '';
+        } else
+        if (phoneBook[i].phone.slice(2) === phone && name) {
             phoneBook[i].email = email;
             phoneBook[i].name = name;
             isUpdated = true;
@@ -134,6 +136,9 @@ exports.find = function (query) {
  * @returns {Number} – количество добавленных и обновленных записей
  */
 exports.importFromCsv = function (csv) {
+    if (!csv) {
+        return 0;
+    }
     var notes = csv.split('\n');
     var count = 0;
     for (var i = 0; i < notes.length; i++) {
