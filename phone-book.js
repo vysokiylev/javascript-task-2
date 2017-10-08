@@ -4,7 +4,7 @@
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
  */
-exports.isStar = true;
+exports.isStar = false;
 
 /**
  * Телефонная книга
@@ -99,8 +99,6 @@ function findFields(query, phone, name, email) {
     }
 
     return email !== undefined && email.indexOf(query) !== -1;
-
-
 }
 
 /**
