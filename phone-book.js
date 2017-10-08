@@ -20,9 +20,6 @@ exports.phoneBook = phoneBook;
  * @returns {Boolean} isValid
  */
 exports.add = function (phone, name, email) {
-    if (arguments.length === 2) {
-        email = '';
-    }
     var isNoteValid = isPhoneValid(phone) && name;
     var exists = false;
     for (var i = 0; i < phoneBook.length; i++) {
@@ -32,7 +29,11 @@ exports.add = function (phone, name, email) {
         }
     }
     if (isNoteValid && !exists) {
-        phoneBook.push({ name: name, phone: phone, email: email });
+        if (email) {
+            phoneBook.push({ name: name, phone: phone, email: email });
+        } else {
+            phoneBook.push({ name: name, phone: phone });
+        }
     }
 
     return isNoteValid && !exists;
@@ -51,14 +52,8 @@ function isPhoneValid(phone) {
  * @returns {Boolean} updated
  */
 exports.update = function (phone, name, email) {
-    if (arguments[2] === undefined) {
-        email = '';
-    }
     var isUpdated = false;
     for (var i = 0; i < phoneBook.length; i++) {
-        if (phoneBook[i].email === undefined) {
-            phoneBook[i].email = '';
-        } else
         if ((phoneBook[i].phone === phone) && name) {
             phoneBook[i].email = email;
             phoneBook[i].name = name;
