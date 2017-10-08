@@ -83,6 +83,16 @@ exports.update = function (phone, name, email) {
  * @returns {Number} count
  */
 exports.findAndRemove = function (query) {
+    if (typeof query !== 'string' || !query) {
+        return 0;
+    }
+    if (query === '*') {
+        query = '';
+    }
+
+    return findByQuery(query);
+};
+function findByQuery(query) {
     var count = 0;
     for (var i = 0; i < phoneBook.length; i++) {
         if (phoneBook[i].name.indexOf(query) !== -1 || phoneBook[i].email.indexOf(query) !== -1 ||
@@ -94,7 +104,7 @@ exports.findAndRemove = function (query) {
     }
 
     return count;
-};
+}
 
 /**
  * Поиск записей по запросу в телефонной книге
@@ -115,6 +125,9 @@ exports.find = function (query) {
     }
     function sortArray(a, b) {
         return a > b;
+    }
+    if (typeof query !== 'string' || query === '') {
+        return [];
     }
     if (query === '*') {
         return phoneBook.map(transformArray).sort(sortArray);
