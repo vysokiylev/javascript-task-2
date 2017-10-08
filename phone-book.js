@@ -26,13 +26,13 @@ exports.add = function (phone, name, email) {
     var isNoteValid = isPhoneValid(phone) && name;
     var exists = false;
     for (var i = 0; i < phoneBook.length; i++) {
-        if (phone === phoneBook[i].phone.slice(2)) {
+        if (phone === phoneBook[i].phone) {
             exists = true;
             break;
         }
     }
     if (isNoteValid && !exists) {
-        phoneBook.push({ name: name, phone: '+7' + phone, email: email });
+        phoneBook.push({ name: name, phone: phone, email: email });
     }
 
     return isNoteValid && !exists;
@@ -59,7 +59,7 @@ exports.update = function (phone, name, email) {
         if (phoneBook[i].email === undefined) {
             phoneBook[i].email = '';
         } else
-        if (phoneBook[i].phone.slice(2) === phone && name) {
+        if ((phoneBook[i].phone === phone) && name) {
             phoneBook[i].email = email;
             phoneBook[i].name = name;
             isUpdated = true;
@@ -104,35 +104,42 @@ function findByQuery(query) {
  * @returns {Array} result
  */
 exports.find = function (query) {
-    function transformArray(item) {
-        var newPhone = item.phone.slice(0, 2) + ' (' + item.phone.slice(2, 5) + ') ' +
-            item.phone.slice(5, 8) + '-' +
-            item.phone.slice(8, 10) + '-' +
-            item.phone.slice(10);
-        if (item.email === '') {
-            return item.name + ', ' + newPhone;
-        }
-
-        return item.name + ', ' + newPhone + ', ' + item.email;
-    }
-    function sortArray(a, b) {
-        return a > b;
-    }
     if (typeof query !== 'string' || query === '') {
         return [];
     }
     if (query === '*') {
-        return phoneBook.map(transformArray).sort(sortArray);
+        return transformArray(phoneBook);
     }
     function filterByQuery(item) {
-        return item.name.indexOf(query) !== -1 || item.phone.indexOf(query) !== -1 ||
-            item.email.indexOf(query) !== -1;
+        return item.email ? (item.phone.indexOf(query) !== -1 ||
+        item.name.indexOf(query) !== -1 || item.email.indexOf(query) !== -1)
+            : (item.phone.indexOf(query) !== -1 || item.name.indexOf(query) !== -1);
     }
     var filtered = phoneBook.filter(filterByQuery);
-    var result = filtered.map(transformArray).sort(sortArray);
+    var result = transformArray(filtered);
 
     return result;
 };
+function transformPhone(phone) {
+    return '+7 (' + phone.slice(0, 3) + ') ' + phone.slice(3, 6) + '-' +
+        phone.slice(6, 8) + '-' + phone.slice(8);
+}
+function transformArray(arr) {
+
+    return arr.map(function (item) {
+        var result = [];
+        result.push(item.name);
+        result.push(transformPhone(item.phone));
+        if (item.email) {
+            result.push(item.email);
+        }
+
+        return result.join(', ');
+
+    }).sort();
+
+}
+
 
 /**
  * Импорт записей из csv-формата
