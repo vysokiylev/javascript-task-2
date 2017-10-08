@@ -23,7 +23,7 @@ exports.add = function (phone, name, email) {
     if (arguments.length === 2) {
         email = '';
     }
-    var isNoteValid = isPhoneValid(phone) && isEmailValid(email) && name;
+    var isNoteValid = isPhoneValid(phone) && name;
     var exists = false;
     for (var i = 0; i < phoneBook.length; i++) {
         if (phone === phoneBook[i].phone.slice(2)) {
@@ -41,14 +41,6 @@ function isPhoneValid(phone) {
     var re = /^\d{10}$/;
 
     return re.test(phone);
-}
-function isEmailValid(email) {
-    if (email === '') {
-        return true;
-    }
-    var re = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-
-    return re.test(email);
 }
 
 /**
