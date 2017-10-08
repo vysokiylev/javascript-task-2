@@ -4,7 +4,7 @@
  * Сделано задание на звездочку
  * Реализован метод importFromCsv
  */
-exports.isStar = false;
+exports.isStar = true;
 
 /**
  * Телефонная книга
@@ -20,23 +20,23 @@ exports.phoneBook = phoneBook;
  * @returns {Boolean} isValid
  */
 exports.add = function (phone, name, email) {
-    var isNoteValid = isPhoneValid(phone) && name;
-    var exists = false;
-    for (var i = 0; i < phoneBook.length; i++) {
-        if (phone === phoneBook[i].phone) {
-            exists = true;
-            break;
-        }
-    }
-    if (isNoteValid && !exists) {
-        if (email) {
-            phoneBook.push({ name: name, phone: phone, email: email });
-        } else {
-            phoneBook.push({ name: name, phone: phone });
+
+
+    if (isPhoneValid(phone) && name) {
+
+        var isPhoneExists = phoneBook.some(function (element) {
+            return element.phone === phone;
+        });
+
+        if (!isPhoneExists) {
+
+            phoneBook.push({ phone: phone, name: name, email: email });
+
+            return true;
         }
     }
 
-    return isNoteValid && !exists;
+    return false;
 };
 function isPhoneValid(phone) {
     var re = /^\d{10}$/;
